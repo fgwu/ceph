@@ -685,6 +685,17 @@ install(TARGETS ceph-mds DESTINATION bin)
 
 add_subdirectory(erasure-code)
 
+
+# rocksdb simple example
+add_executable(simple_example
+  rocksdb/examples/simple_example.cc)
+target_include_directories(simple_example PUBLIC ${ROCKSDB_INCLUDE_DIR})
+target_link_libraries(simple_example
+  rocksdb pthread snappy z bz2)
+add_dependencies(rocksdb build_rocksdb)
+install(TARGETS simple_example
+  DESTINATION bin)
+
 # Support/Tools
 if(WITH_TESTS)
 add_subdirectory(googletest/googlemock)
