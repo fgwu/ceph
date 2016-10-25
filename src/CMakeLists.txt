@@ -696,6 +696,16 @@ add_dependencies(rocksdb build_rocksdb)
 install(TARGETS simple_example
   DESTINATION bin)
 
+add_executable(myblue
+  test/myblue.cc)
+target_include_directories(myblue PUBLIC ${ROCKSDB_INCLUDE_DIR})
+target_link_libraries(myblue
+  rocksdb pthread snappy z bz2)
+add_dependencies(rocksdb build_rocksdb)
+install(TARGETS myblue
+  DESTINATION bin)
+
+
 # Support/Tools
 if(WITH_TESTS)
 add_subdirectory(googletest/googlemock)
