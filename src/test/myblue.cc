@@ -8,6 +8,7 @@
 #include "rocksdb/db.h"
 #include "rocksdb/slice.h"
 #include "rocksdb/options.h"
+#include "BlueRocksEnv.h"
 
 using namespace rocksdb;
 
@@ -16,11 +17,15 @@ std::string kDBPath = "/tmp/rocksdb_simple_example";
 int main() {
   DB* db;
   Options options;
+  Env *env = NULL;
   // Optimize RocksDB. This is the easiest way to get RocksDB to perform well
   options.IncreaseParallelism();
   options.OptimizeLevelStyleCompaction();
   // create the DB if it's not already present
   options.create_if_missing = true;
+
+  env = new BlueRocksEnv(NULL);
+  options.env = env;
 
   // open DB
   Status s = DB::Open(options, kDBPath, &db);
@@ -49,7 +54,9 @@ int main() {
   db->Get(ReadOptions(), "key2", &value);
   assert(value == "value");
 
+
   delete db;
+  delete env;
 
   return 0;
 }

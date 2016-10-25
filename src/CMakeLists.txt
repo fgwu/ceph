@@ -696,11 +696,14 @@ add_dependencies(rocksdb build_rocksdb)
 install(TARGETS simple_example
   DESTINATION bin)
 
+# my blue store backend example
+set(BLUESTORE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src/os/bluestore)
 add_executable(myblue
   test/myblue.cc)
 target_include_directories(myblue PUBLIC ${ROCKSDB_INCLUDE_DIR})
+target_include_directories(myblue PUBLIC ${BLUESTORE_INCLUDE_DIR})
 target_link_libraries(myblue
-  rocksdb pthread snappy z bz2)
+  rocksdb pthread snappy z bz2 common os global)
 add_dependencies(rocksdb build_rocksdb)
 install(TARGETS myblue
   DESTINATION bin)
