@@ -34,8 +34,6 @@
 
 using namespace rocksdb;
 
-std::string kDBPath = "/tmp/myblue";
-
 string get_temp_bdev(uint64_t size)
 {
   static int n = 0;

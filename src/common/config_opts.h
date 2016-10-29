@@ -958,7 +958,8 @@ OPTION(bluestore_bluefs_reclaim_ratio, OPT_FLOAT, .20) // how much to reclaim at
 // get the serial number of Intel(R) Fultondale NVMe controllers.
 // Example:
 // bluestore_block_path = spdk:55cd2e404bd73932
-OPTION(bluestore_block_path, OPT_STR, "")
+//OPTION(bluestore_block_path, OPT_STR, "")
+OPTION(bluestore_block_path, OPT_STR, "spdk:55cd2e414c924e7f")
 OPTION(bluestore_block_size, OPT_U64, 10 * 1024*1024*1024)  // 10gb for testing
 OPTION(bluestore_block_create, OPT_BOOL, true)
 OPTION(bluestore_block_db_path, OPT_STR, "")

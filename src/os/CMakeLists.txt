@@ -67,13 +67,17 @@ if(WITH_FUSE)
 endif()
 
 if(WITH_SPDK)
+  set(SPDK_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src/spdk/include)
   target_link_libraries(os
     ${SPDK_LIBRARIES}
     ${DPDK_LIBRARIES}
     ${PCIACCESS_LIBRARIES})
+  set_target_properties(os PROPERTIES
+    COMPILE_FLAGS "${SIMD_COMPILE_FLAGS}")
   target_include_directories(os
     PRIVATE
     ${DPDK_INCLUDE_DIR}
+    ${SPDK_INCLUDE_DIR}
     ${PCIACCESS_INCLUDE_DIR})
 endif(WITH_SPDK)
 
@@ -110,4 +114,24 @@ if(WITH_SPDK)
       INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/src/spdk/include")
     list(APPEND SPDK_LIBRARIES spdk_${lib})
   endforeach()
+
+
+  # my blue store backend example
+  set(BLUESTORE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src/os/bluestore)
+  set(SPDK_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src/spdk/include)
+
+  add_executable(myblue
+    bluestore/myblue.cc)
+  target_include_directories(myblue PUBLIC ${ROCKSDB_INCLUDE_DIR})
+  target_include_directories(myblue PUBLIC ${BLUESTORE_INCLUDE_DIR})
+  target_include_directories(myblue PUBLIC ${SPDK_INCLUDE_DIR})
+  target_link_libraries(myblue
+    rocksdb pthread snappy z bz2 common os global ${SPDK_LIBRARIES})
+
+  #set_target_properties(myblue PROPERTIES
+  #  COMPILE_FLAGS "${SIMD_COMPILE_FLAGS}")
+  #SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC" )
+  add_dependencies(rocksdb build_rocksdb build_spdk)
+  install(TARGETS myblue
+    DESTINATION bin)
 endif(WITH_SPDK)

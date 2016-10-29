@@ -28,8 +28,8 @@
 #include <thread>
 #include <xmmintrin.h>
 
-#include <spdk/pci.h>
-#include <spdk/nvme.h>
+#include "spdk/pci.h"
+#include "spdk/nvme.h"
 
 #include <rte_config.h>
 #include <rte_cycles.h>

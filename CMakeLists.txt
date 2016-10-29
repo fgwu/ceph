@@ -218,7 +218,7 @@ find_package(xfs)
 set(HAVE_LIBXFS ${XFS_FOUND})
 endif(${WITH_XFS})
 
-option(WITH_SPDK "Enable SPDK" OFF)
+option(WITH_SPDK "Enable SPDK" ON)
 if(WITH_SPDK)
   find_package(pciaccess REQUIRED)
   find_package(dpdk REQUIRED)
