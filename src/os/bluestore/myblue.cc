@@ -33,9 +33,9 @@
 #include "global/global_init.h"
 #include "include/stringify.h"
 
-#define dout_subsys ceph_subsys_bdev
+#define dout_subsys ceph_subsys_myblue
 #undef dout_prefix
-#define dout_prefix *_dout << "bdev "
+#define dout_prefix *_dout << "myblue "
 
 using namespace rocksdb;
 
@@ -47,7 +47,7 @@ int setup_block_dev(
   uint64_t size,
   bool create)
 {
-  dout(20) << __func__ << " name " << name << " path " << epath
+  dout(1) << __func__ << " name " << name << " path " << epath
 	   << " size " << size << " create=" << (int)create << dendl;
   int r = 0;
   int flags = O_RDWR;
@@ -174,8 +174,12 @@ int main(int argc, char **argv) {
   std::string value;
   uuid_d fsid;
   uint64_t size = 1048576 * 1024; //5GiB
-  std::string fn = get_temp_bdev(size);
+  //  std::string fn = get_temp_bdev(size);
 
+
+  std::string path = "/home/fwu/myblue";
+  std::string blockdev = "ssd_block";
+  std::string fn;
 
   // init the environment, so that logs will be print normally.
   ::argv_to_vec(argc, (const char**)argv, args);
@@ -189,8 +193,14 @@ int main(int argc, char **argv) {
   // create the DB if it's not already present
   options.create_if_missing = true;
 
+  myblue_path_fd = ::open(path.c_str(), O_DIRECTORY);
+  setup_block_dev("ssd_block", g_conf->bluestore_block_path, 
+		   g_conf->bluestore_block_size,
+		   g_conf->bluestore_block_create);
   // init bluefs
   bluefs = new BlueFS;
+
+  fn = path + "/" + blockdev;
   bluefs->add_block_device(BlueFS::BDEV_DB, fn);
   bluefs->add_block_extent(BlueFS::BDEV_DB, 1048576, size - 1048576);
   bluefs->mkfs(fsid);
@@ -244,11 +254,6 @@ int main(int argc, char **argv) {
   bluefs = NULL;
 
 
-  std::string path = "/home/fwu/myblue";
-  myblue_path_fd = ::open(path.c_str(), O_DIRECTORY);
-  setup_block_dev("ssd_block", g_conf->bluestore_block_path, 
-		   g_conf->bluestore_block_size,
-		   g_conf->bluestore_block_create);
   rm_block_dev("ssd_block");
   ::close(myblue_path_fd);
   return r;
