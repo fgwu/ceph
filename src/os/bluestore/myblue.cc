@@ -215,7 +215,8 @@ int main(int argc, char **argv) {
   options.env = env;
 
   // open DB
-  s = DB::Open(options, fn, &db);
+  //  s = DB::Open(options, fn, &db);
+  s = DB::Open(options, g_conf->bluestore_block_path, &db);
   assert(s.ok());
 
   // Put key-value
@@ -239,6 +240,10 @@ int main(int argc, char **argv) {
   assert(s.IsNotFound());
 
   db->Get(ReadOptions(), "key2", &value);
+  dout(1) << __func__ << " value " << value << dendl;
+
+
+
   assert(value == "value");
 
 
