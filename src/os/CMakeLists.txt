@@ -128,10 +128,50 @@ if(WITH_SPDK)
   target_link_libraries(myblue
     rocksdb pthread snappy z bz2 common os global ${SPDK_LIBRARIES})
 
-  #set_target_properties(myblue PROPERTIES
-  #  COMPILE_FLAGS "${SIMD_COMPILE_FLAGS}")
-  #SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC" )
   add_dependencies(rocksdb build_rocksdb build_spdk)
   install(TARGETS myblue
     DESTINATION bin)
+
+  # rocksdb db_bench requires gflags
+  find_package(gflags REQUIRED)
+  message(STATUS "GFLAGS library is enabled")
+
+  if(DEFINED ENV{GFLAGS_INCLUDE})
+    set(GFLAGS_INCLUDE $ENV{GFLAGS_INCLUDE})
+  endif()
+
+  if(DEFINED ENV{GFLAGS_LIB_DEBUG})
+    set(GFLAGS_LIB_DEBUG $ENV{GFLAGS_LIB_DEBUG})
+  endif()
+
+  if(DEFINED ENV{GFLAGS_LIB_RELEASE})
+    set(GFLAGS_LIB_RELEASE $ENV{GFLAGS_LIB_RELEASE})
+  endif()
+
+  set(GFLAGS_CXX_FLAGS -DGFLAGS=google -DROCKSDB_PLATFORM_POSIX)
+  set(GFLAGS_LIBS debug ${GFLAGS_LIB_DEBUG} optimized ${GFLAGS_LIB_RELEASE})
+
+  add_definitions(${GFLAGS_CXX_FLAGS})
+#  include_directories(${GFLAGS_INCLUDE})
+#  set (THIRDPARTY_LIBS ${THIRDPARTY_LIBS} ${GFLAGS_LIBS})
+
+
+  add_executable(db_bench
+    ${CMAKE_SOURCE_DIR}/src/rocksdb/tools/db_bench.cc
+    ${CMAKE_SOURCE_DIR}/src/rocksdb/tools/db_bench_tool.cc
+    ${CMAKE_SOURCE_DIR}/src/rocksdb/util/testutil.cc)
+  target_include_directories(db_bench PUBLIC ${ROCKSDB_INCLUDE_DIR})
+  target_include_directories(db_bench PUBLIC ${BLUESTORE_INCLUDE_DIR})
+  target_include_directories(db_bench PUBLIC ${SPDK_INCLUDE_DIR})
+  target_include_directories(db_bench PUBLIC ${GFLAGS_INCLUDE_DIR})
+  target_include_directories(db_bench PUBLIC "${CMAKE_SOURCE_DIR}/src/rocksdb")
+  target_link_libraries(db_bench
+    rocksdb pthread snappy z bz2 common os global ${SPDK_LIBRARIES} gtest gflags)
+
+  add_dependencies(rocksdb build_rocksdb build_spdk gflags gtest)
+  install(TARGETS db_bench
+    DESTINATION bin)
+
+  
+
 endif(WITH_SPDK)
