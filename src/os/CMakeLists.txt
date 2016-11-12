@@ -148,7 +148,7 @@ if(WITH_SPDK)
     set(GFLAGS_LIB_RELEASE $ENV{GFLAGS_LIB_RELEASE})
   endif()
 
-  set(GFLAGS_CXX_FLAGS -DGFLAGS=google -DROCKSDB_PLATFORM_POSIX)
+  set(GFLAGS_CXX_FLAGS -DGFLAGS=google -DROCKSDB_PLATFORM_POSIX -DDBBLUE)
   set(GFLAGS_LIBS debug ${GFLAGS_LIB_DEBUG} optimized ${GFLAGS_LIB_RELEASE})
 
   add_definitions(${GFLAGS_CXX_FLAGS})
@@ -158,7 +158,7 @@ if(WITH_SPDK)
 
   add_executable(db_bench
     ${CMAKE_SOURCE_DIR}/src/rocksdb/tools/db_bench.cc
-    ${CMAKE_SOURCE_DIR}/src/rocksdb/tools/db_bench_tool.cc
+    ${CMAKE_SOURCE_DIR}/src/os/bluestore/db_bench_tool_blue.cc
     ${CMAKE_SOURCE_DIR}/src/rocksdb/util/testutil.cc)
   target_include_directories(db_bench PUBLIC ${ROCKSDB_INCLUDE_DIR})
   target_include_directories(db_bench PUBLIC ${BLUESTORE_INCLUDE_DIR})
