@@ -4523,7 +4523,7 @@ int db_bench_tool(int argc, char** argv) {
   // Choose a location for the test database if none given with --db=<path>
 #ifdef DBBLUE
   BlueFS *bluefs = new BlueFS;
-  uint64_t size = 1024 * 1048756;
+  //  uint64_t size = 1024 * 1048756;
   int r;
   // this is a symlink pointing to spdk:55cd2e414c924e7f
   std::string fn = "/home/fwu/myblue/ssd_block";
@@ -4533,7 +4533,19 @@ int db_bench_tool(int argc, char** argv) {
   ::global_init(NULL, args, CEPH_ENTITY_TYPE_CLIENT, CODE_ENVIRONMENT_UTILITY
 		, 0);
   bluefs->add_block_device(BlueFS::BDEV_DB, fn);
-  bluefs->add_block_extent(BlueFS::BDEV_DB, 1048576, size - 1048576);
+
+#define BLUEFS_START 8192 /* reference: BlueStore.cc:BLUEFS_START*/
+  uint64_t initial =
+    bluefs->get_block_device_size(BlueFS::BDEV_DB) * 
+    (g_conf->bluestore_bluefs_min_ratio +
+     g_conf->bluestore_bluefs_gift_ratio);
+  initial = MAX(initial, g_conf->bluestore_bluefs_min);
+  // align to bluefs's alloc_size
+  initial = P2ROUNDUP(initial, g_conf->bluefs_alloc_size);
+  initial += g_conf->bluefs_alloc_size - BLUEFS_START;
+  bluefs->add_block_extent(BlueFS::BDEV_DB, BLUEFS_START, initial);
+  //  bluefs_extents.insert(BLUEFS_START, initial); ??
+  //  bluefs->add_block_extent(BlueFS::BDEV_DB, 1048576, size - 1048576);
   bluefs->mkfs(fsid);
   r = bluefs->mount();
   if (r < 0) {
