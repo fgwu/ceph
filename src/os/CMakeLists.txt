@@ -156,7 +156,7 @@ if(WITH_SPDK)
 #  set (THIRDPARTY_LIBS ${THIRDPARTY_LIBS} ${GFLAGS_LIBS})
 
 
-  add_executable(db_bench
+  add_executable(db_bench_blue
     ${CMAKE_SOURCE_DIR}/src/rocksdb/tools/db_bench.cc
     ${CMAKE_SOURCE_DIR}/src/os/bluestore/db_bench_tool_blue.cc
     ${CMAKE_SOURCE_DIR}/src/rocksdb/util/testutil.cc)
