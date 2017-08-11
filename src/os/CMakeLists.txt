@@ -160,16 +160,16 @@ if(WITH_SPDK)
     ${CMAKE_SOURCE_DIR}/src/rocksdb/tools/db_bench.cc
     ${CMAKE_SOURCE_DIR}/src/os/bluestore/db_bench_tool_blue.cc
     ${CMAKE_SOURCE_DIR}/src/rocksdb/util/testutil.cc)
-  target_include_directories(db_bench PUBLIC ${ROCKSDB_INCLUDE_DIR})
-  target_include_directories(db_bench PUBLIC ${BLUESTORE_INCLUDE_DIR})
-  target_include_directories(db_bench PUBLIC ${SPDK_INCLUDE_DIR})
-  target_include_directories(db_bench PUBLIC ${GFLAGS_INCLUDE_DIR})
-  target_include_directories(db_bench PUBLIC "${CMAKE_SOURCE_DIR}/src/rocksdb")
-  target_link_libraries(db_bench
+  target_include_directories(db_bench_blue PUBLIC ${ROCKSDB_INCLUDE_DIR})
+  target_include_directories(db_bench_blue PUBLIC ${BLUESTORE_INCLUDE_DIR})
+  target_include_directories(db_bench_blue PUBLIC ${SPDK_INCLUDE_DIR})
+  target_include_directories(db_bench_blue PUBLIC ${GFLAGS_INCLUDE_DIR})
+  target_include_directories(db_bench_blue PUBLIC "${CMAKE_SOURCE_DIR}/src/rocksdb")
+  target_link_libraries(db_bench_blue
     rocksdb pthread snappy z bz2 common os global ${SPDK_LIBRARIES} gtest gflags)
 
   add_dependencies(rocksdb build_rocksdb build_spdk gflags gtest)
-  install(TARGETS db_bench
+  install(TARGETS db_bench_blue
     DESTINATION bin)
 
   
